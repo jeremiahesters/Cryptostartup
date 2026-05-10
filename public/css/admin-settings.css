@@ -202,3 +202,10 @@ top:0px !important;
 .voyager .settings .nav-tabs > li > a:hover{
 background-color:#fff !important;
 }
+
+/* Helper copy under settings fields (not code styling) */
+.settings .admin-setting-description {
+display: block;
+margin: 6px 0 10px 0;
+line-height: 1.45;
+}

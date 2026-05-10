@@ -184,7 +184,8 @@ return [
 
     'primary_color' => '#cb0c9f',
 
-    'show_dev_tips' => env('APP_DEBUG'), // Show development tip "How To Use:" in Menu and Settings
+    // Off by default so Settings labels do not show raw getSetting() snippets to admins.
+    'show_dev_tips' => env('VOYAGER_SHOW_DEV_TIPS', false),
 
     // Here you can specify additional assets you would like to be included in the master.blade
     'additional_css' => [

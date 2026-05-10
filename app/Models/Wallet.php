@@ -101,14 +101,8 @@ class Wallet extends Model
      */
     public function getFormattedBalanceUsdAttribute()
     {
-        $usdValue = $this->balance_usd;
-        
-        if ($usdValue >= 1000000) {
-            return '$' . number_format($usdValue / 1000000, 2) . 'M';
-        } elseif ($usdValue >= 1000) {
-            return '$' . number_format($usdValue / 1000, 2) . 'K';
-        }
-        
+        $usdValue = (float) $this->balance_usd;
+
         return '$' . number_format($usdValue, 2);
     }
 

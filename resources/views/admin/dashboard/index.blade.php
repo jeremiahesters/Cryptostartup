@@ -112,17 +112,17 @@
 
         <!-- Alerts Section -->
         @if(!empty($alerts))
-        <div class="row">
+        <div class="row" id="platform-alerts-row">
             <div class="col-md-12">
-                <div class="panel panel-bordered">
+                <div class="panel panel-bordered" id="platform-alerts-panel">
                     <div class="panel-heading">
-                        <h3 class="panel-title">
+                        <h3 class="panel-title platform-alerts-title">
                             <i class="voyager-warning"></i> Platform Alerts
                         </h3>
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body platform-alerts-body">
                         @foreach($alerts as $alert)
-                            <div class="alert alert-{{ $alert['type'] }} alert-dismissible">
+                            <div class="alert alert-{{ $alert['type'] }} alert-dismissible platform-alert-item">
                                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                                 <strong>{{ $alert['title'] }}</strong> {{ $alert['message'] }}
                                 @if($alert['action_url'])
@@ -379,6 +379,16 @@ $(document).ready(function() {
     
     // Initialize tooltips
     $('[data-toggle="tooltip"]').tooltip();
+
+    // Collapse Platform Alerts section when every alert is dismissed (Bootstrap 3)
+    $(document).on('closed.bs.alert', '.platform-alert-item', function() {
+        setTimeout(function() {
+            var $panel = $('#platform-alerts-panel');
+            if ($panel.length && $panel.find('.platform-alert-item').length === 0) {
+                $('#platform-alerts-row').remove();
+            }
+        }, 0);
+    });
 });
 
 function startAutoRefresh() {
@@ -475,6 +485,14 @@ $('.panel.widget').hover(
 
 .alert {
     margin-bottom: 10px;
+}
+
+/* Tighten heading → first alert; hide empty panel when all alerts dismissed */
+.platform-alerts-body {
+    padding-top: 10px;
+}
+.platform-alerts-body .platform-alert-item:first-child {
+    margin-top: 0;
 }
 
 .media {

@@ -132,9 +132,9 @@
         <!-- Tokens Table -->
         <div class="row">
             <div class="col-md-12">
-                <div class="panel panel-bordered">
-                    <div class="panel-body">
-                        <div class="table-responsive">
+                <div class="panel panel-bordered tokens-table-panel">
+                    <div class="panel-body tokens-table-panel-body">
+                        <div class="table-responsive tokens-table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -162,7 +162,7 @@
                                                         </div>
                                                     @endif
                                                     <div class="media-body">
-                                                        <strong>{{ $token->name }}</strong>
+                                                        <strong><a href="{{ route('voyager.tokens.show', $token->id) }}">{{ $token->name }}</a></strong>
                                                         <br>
                                                         <small class="text-muted">{{ $token->symbol }}</small>
                                                         @if($token->is_verified)
@@ -180,10 +180,10 @@
                                                     {{ number_format($token->change_24h, 2) }}%
                                                 </span>
                                             </td>
-                                            <td>{{ $token->formatted_market_cap }}</td>
-                                            <td>{{ $token->formatted_volume }}</td>
+                                            <td>${{ number_format((float) $token->market_cap, 2) }}</td>
+                                            <td>${{ number_format((float) $token->volume_24h, 2) }}</td>
                                             <td>
-                                                <span class="label label-default">{{ $token->blockchain_network }}</span>
+                                                <span class="label label-default">{{ $token->display_network_label }}</span>
                                             </td>
                                             <td>
                                                 @if($token->is_active)
@@ -197,11 +197,11 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <div class="btn-group" role="group">
+                                                <div class="btn-group dropdown" role="group">
                                                     <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown">
                                                         Actions <span class="caret"></span>
                                                     </button>
-                                                    <ul class="dropdown-menu" role="menu">
+                                                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
                                                         <li>
                                                             <a href="{{ route('voyager.tokens.show', $token->id) }}">
                                                                 <i class="voyager-eye"></i> View
@@ -361,6 +361,23 @@
             </div>
         </div>
     </div>
+@stop
+
+@section('css')
+<style>
+@media (min-width: 992px) {
+    .tokens-table-panel .tokens-table-responsive {
+        overflow: visible;
+    }
+    .tokens-table-panel .tokens-table-panel-body {
+        overflow: visible;
+    }
+}
+.tokens-table-panel .dropdown-menu {
+    max-height: none;
+    overflow: visible;
+}
+</style>
 @stop
 
 @section('javascript')

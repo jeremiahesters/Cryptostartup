@@ -12,7 +12,7 @@ class UserGender extends Model
      * @var array
      */
     protected $fillable = [
-        'name',
+        'gender_name',
     ];
 
     /**

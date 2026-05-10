@@ -8,11 +8,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Http\Controllers\Traits\BreadRelationshipParser;
+use App\Http\Controllers\Voyager\Concerns\MergesVoyagerBelongsToFromRequest;
 use TCG\Voyager\Http\Controllers\VoyagerBaseController as BaseVoyagerBaseController;
 
 class VoyagerBaseController extends BaseVoyagerBaseController
 {
     use BreadRelationshipParser;
+    use MergesVoyagerBelongsToFromRequest;
 
     //***************************************
     //               ____
@@ -40,6 +42,7 @@ class VoyagerBaseController extends BaseVoyagerBaseController
      */
     public function index(Request $request)
     {
+       
         // GET THE SLUG, ex. 'posts', 'pages', etc.
         $slug = $this->getSlug($request);
 
@@ -215,7 +218,7 @@ class VoyagerBaseController extends BaseVoyagerBaseController
         if (view()->exists("voyager::$slug.browse")) {
             $view = "voyager::$slug.browse";
         }
-
+        
         return Voyager::view($view, compact(
             'actions',
             'dataType',

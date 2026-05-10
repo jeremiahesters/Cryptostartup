@@ -223,6 +223,11 @@
                 $('#confirm_delete_modal').modal('hide');
             });
             $('[data-toggle="tooltip"]').tooltip();
+
+            @if ($add && $dataType->slug === 'users')
+            $('input[name="password"]').attr({ autocomplete: 'new-password' });
+            $('input[name="username"]').attr({ autocomplete: 'off' });
+            @endif
         });
     </script>
 @stop

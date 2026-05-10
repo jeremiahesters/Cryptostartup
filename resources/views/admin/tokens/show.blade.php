@@ -99,14 +99,14 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <strong>Market Cap:</strong><br>
-                                                {{ $cryptocurrency->formatted_market_cap }}
+                                                ${{ number_format((float) $cryptocurrency->market_cap, 2) }}
                                             </div>
                                         </div>
                                         <br>
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <strong>24h Volume:</strong><br>
-                                                {{ $cryptocurrency->formatted_volume }}
+                                                ${{ number_format((float) $cryptocurrency->volume_24h, 2) }}
                                             </div>
                                         </div>
                                     </div>
@@ -118,6 +118,16 @@
                                         <h3 class="panel-title">Supply Information</h3>
                                     </div>
                                     <div class="panel-body">
+                                        @php
+                                            $maxS = $cryptocurrency->max_supply;
+                                            $circS = $cryptocurrency->circulating_supply;
+                                            $supplyInvalid = $maxS !== null && (float) $circS > (float) $maxS;
+                                        @endphp
+                                        @if($supplyInvalid)
+                                            <div class="alert alert-warning">
+                                                Data issue: circulating supply is greater than max supply. Edit the token to correct values.
+                                            </div>
+                                        @endif
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <strong>Total Supply:</strong><br>
@@ -148,7 +158,7 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <strong>Blockchain Network:</strong><br>
-                                                <span class="label label-default">{{ $cryptocurrency->blockchain_network }}</span>
+                                                <span class="label label-default">{{ $cryptocurrency->display_network_label }}</span>
                                             </div>
                                             <div class="col-md-6">
                                                 <strong>Token Type:</strong><br>

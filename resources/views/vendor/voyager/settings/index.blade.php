@@ -429,10 +429,8 @@
                                     }
                                     ?>
                                     @if($hasDescription)
-                                        <div class="admin-setting-description setting-row setting-{{$setting->key}}" data-settingkey={{$setting->key}}>
-                                            <code>
-                                                {{$settingDetails->description}}
-                                            </code>
+                                        <div class="admin-setting-description setting-row setting-{{$setting->key}} text-muted small" data-settingkey={{$setting->key}}>
+                                            {{$settingDetails->description}}
                                         </div>
                                     @endif
                                     @if(!$loop->last)

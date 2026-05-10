@@ -124,7 +124,7 @@
                                                 @elseif($row->type == 'image')
                                                     <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ $dataType->slug == 'users' ? getUserAvatarAttribute( $data->{$row->field} ) : Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" class="w-100p">
                                                 @elseif($row->type == 'relationship')
-                                                    @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
+                                                    @include('voyager::formfields.relationship', ['view' => 'browse', 'options' => $row->details, 'row' => $row, 'data' => $data])
                                                 @elseif($row->type == 'select_multiple')
                                                     @if(property_exists($row->details, 'relationship'))
 

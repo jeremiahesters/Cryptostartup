@@ -349,7 +349,52 @@ class Cryptocurrency extends Model
 
     public function scopeByNetwork($query, string $network)
     {
-        return $query->where('blockchain_network', $network);
+        $map = [
+            'ETH' => ['eth', 'ethereum'],
+            'BSC' => ['bsc', 'binance', 'binance_smart_chain', 'bnb'],
+            'MATIC' => ['matic', 'polygon'],
+            'ARB' => ['arb', 'arbitrum'],
+        ];
+        $needle = strtoupper(trim($network));
+        $variants = $map[$needle] ?? [strtolower($network)];
+
+        return $query->where(function ($q) use ($variants) {
+            foreach ($variants as $v) {
+                $q->orWhereRaw('LOWER(blockchain_network) = ?', [strtolower($v)]);
+            }
+        });
+    }
+
+    /**
+     * Sum of fee percentages for admin display.
+     */
+    public function getTotalFeesAttribute(): float
+    {
+        return (float) $this->creator_fee_percentage
+            + (float) $this->platform_fee_percentage
+            + (float) $this->liquidity_pool_percentage;
+    }
+
+    /**
+     * Normalized network badge label (ETH vs ethereum, etc.).
+     */
+    public function getDisplayNetworkLabelAttribute(): string
+    {
+        $labels = [
+            'eth' => 'ETH',
+            'ethereum' => 'ETH',
+            'bsc' => 'BSC',
+            'binance' => 'BSC',
+            'binance_smart_chain' => 'BSC',
+            'bnb' => 'BSC',
+            'matic' => 'MATIC',
+            'polygon' => 'MATIC',
+            'arb' => 'ARB',
+            'arbitrum' => 'ARB',
+        ];
+        $key = strtolower((string) $this->blockchain_network);
+
+        return $labels[$key] ?? strtoupper($this->blockchain_network);
     }
 
     public function scopeByType($query, string $type)

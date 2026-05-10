@@ -158,6 +158,8 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+    
+      
         // Generate username if not provided
         if (!isset($data['username']) || empty($data['username'])) {
             $data['username'] = str_replace(' ', '', strtolower($data['name'])) . rand(1000, 9999);

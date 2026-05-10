@@ -122,6 +122,14 @@ class CryptocurrencyController extends Controller
             'liquidity_pool_percentage' => 'required|numeric|min:0|max:100',
         ]);
 
+        $validator->after(function ($validator) use ($request) {
+            $max = $request->input('max_supply');
+            $circ = $request->input('circulating_supply');
+            if ($max !== null && $max !== '' && $circ !== null && (float) $circ > (float) $max) {
+                $validator->errors()->add('circulating_supply', __('Circulating supply cannot exceed max supply.'));
+            }
+        });
+
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
@@ -209,6 +217,14 @@ class CryptocurrencyController extends Controller
             'platform_fee_percentage' => 'required|numeric|min:0|max:100',
             'liquidity_pool_percentage' => 'required|numeric|min:0|max:100',
         ]);
+
+        $validator->after(function ($validator) use ($request) {
+            $max = $request->input('max_supply');
+            $circ = $request->input('circulating_supply');
+            if ($max !== null && $max !== '' && $circ !== null && (float) $circ > (float) $max) {
+                $validator->errors()->add('circulating_supply', __('Circulating supply cannot exceed max supply.'));
+            }
+        });
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -320,6 +336,13 @@ class CryptocurrencyController extends Controller
         $supplyType = $request->supply_type;
         $oldAmount = $cryptocurrency->{$supplyType};
         $newAmount = $request->new_amount;
+
+        $maxSupply = $cryptocurrency->max_supply;
+        if ($supplyType === 'circulating_supply' && $maxSupply !== null && (float) $newAmount > (float) $maxSupply) {
+            return redirect()->back()
+                ->withErrors(['new_amount' => __('Circulating supply cannot exceed max supply.')])
+                ->withInput();
+        }
 
         $cryptocurrency->update([$supplyType => $newAmount]);
 
