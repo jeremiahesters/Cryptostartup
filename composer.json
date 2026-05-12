@@ -53,10 +53,7 @@
          "secure-http": false,
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true,
-        "platform": {
-            "php": "8.0.2"
-        }
+        "sort-packages": true
     },
     "extra": {
         "laravel": {
