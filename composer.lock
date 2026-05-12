@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b09c413df91182f3448ef7fee1bea1a",
+    "content-hash": "d1ae5644618b24ab8f49873690ea2556",
     "packages": [
         {
             "name": "anhskohbo/no-captcha",
@@ -9106,78 +9106,6 @@
                 "source": "https://github.com/yabacon/paystack-php/tree/master"
             },
             "time": "2020-08-19T13:24:26+00:00"
-        },
-        {
-            "name": "zanysoft/laravel-zip",
-            "version": "2.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zanysoft/laravel-zip.git",
-                "reference": "04ed09db8ca799e088b3af183e6de50be8346bf4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zanysoft/laravel-zip/zipball/04ed09db8ca799e088b3af183e6de50be8346bf4",
-                "reference": "04ed09db8ca799e088b3af183e6de50be8346bf4",
-                "shasum": ""
-            },
-            "require": {
-                "ext-zip": "*",
-                "illuminate/support": "^7.0|^8.0|^9.0|^10.0",
-                "php": ">=7.4"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^6.24",
-                "phpunit/phpunit": "^9.5",
-                "scrutinizer/ocular": "^1.9"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Zip": "ZanySoft\\Zip\\Facades\\Zip"
-                    },
-                    "providers": [
-                        "ZanySoft\\Zip\\ZipServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "ZanySoft\\Zip\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Zany Soft",
-                    "email": "info@zanysoft.net",
-                    "homepage": "http://www.zanysoft.net"
-                }
-            ],
-            "description": "laravel-zip is the world's leading zip utility for file compression and backup.",
-            "homepage": "http://www.zanysoft.net",
-            "keywords": [
-                "backup",
-                "extract",
-                "laravel",
-                "laravel-zip",
-                "laravel8",
-                "laravel9",
-                "merge",
-                "multiple",
-                "unzip",
-                "zip",
-                "ziparchive"
-            ],
-            "support": {
-                "issues": "https://github.com/zanysoft/laravel-zip/issues",
-                "source": "https://github.com/zanysoft/laravel-zip/tree/2.0.4"
-            },
-            "time": "2023-02-16T05:33:35+00:00"
         }
     ],
     "packages-dev": [
@@ -13236,15 +13164,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0.2"
+        "php": ">=8.2"
     },
-    "platform-dev": {},
-    "platform-overrides": {
-        "php": "8.0.2"
-    },
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }
