@@ -37,7 +37,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'   # match whatever your production PHP version actually is
+          php-version: '8.3'   # match whatever your production PHP version actually is
 
       - name: Composer install (production deps only)
         run: composer install --no-dev --optimize-autoloader --prefer-dist
