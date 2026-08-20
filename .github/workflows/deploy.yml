@@ -1,0 +1,112 @@
+name: Deploy xtrafreaky.com
+
+# Save this file as: .github/workflows/deploy.yml (in your repo root)
+#
+# Trigger: any push to the branch below goes straight to production —
+# no manual approval step (this was a deliberate choice: fast, but it
+# means a bad push is live immediately, so keep this branch protected
+# with required PR reviews if you want a safety net before merge).
+on:
+  push:
+    branches: [Saqib]   # deploys straight to production on every push to this branch
+
+# Prevents two deploys racing each other if you push twice quickly.
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+env:
+  REMOTE_HOST: ${{ secrets.GODADDY_SSH_HOST }}      # e.g. 132.148.176.103 or the server hostname
+  REMOTE_USER: ${{ secrets.GODADDY_SSH_USER }}      # e.g. wao3fxpfdect
+  REMOTE_PORT: ${{ secrets.GODADDY_SSH_PORT || '22' }}
+  REMOTE_APP: /home/wao3fxpfdect/laravel
+  REMOTE_PUB: /home/wao3fxpfdect/public_html
+  CTRL_PATH: /tmp/deploy-ssh-cm
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # --- Build everything on the runner, not on the shared host -----------------
+      # GoDaddy shared hosting's composer/npm are often outdated or restricted, so
+      # we build vendor/ and the frontend assets here and just ship the result.
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'   # match whatever your production PHP version actually is
+
+      - name: Composer install (production deps only)
+        run: composer install --no-dev --optimize-autoloader --prefer-dist
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install JS deps and build assets
+        run: |
+          npm ci
+          npm run production --if-present || npm run build
+
+      # --- SSH setup: dedicated deploy key (no passphrase — that's expected for CI, --
+      # --- the key itself is scoped to this one job and only lives in the secret) --
+
+      - name: Write deploy key and known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/deploy_key
+          echo "${{ secrets.GODADDY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$REMOTE_PORT" -H "$REMOTE_HOST" >> ~/.ssh/known_hosts
+
+      - name: Open one shared SSH connection for the whole deploy
+        run: |
+          ssh -i ~/.ssh/deploy_key -fNM -o ControlMaster=yes -o ControlPath="$CTRL_PATH" -o ControlPersist=5m \
+              -p "$REMOTE_PORT" "$REMOTE_USER@$REMOTE_HOST"
+
+      # --- Ship the build: frontend assets to public_html, app code to laravel/ ---
+
+      - name: Sync frontend build (public/ -> public_html/)
+        run: |
+          rsync -az --delete-after \
+            --exclude='.htaccess' \
+            -e "ssh -i ~/.ssh/deploy_key -o ControlPath=$CTRL_PATH -p $REMOTE_PORT" \
+            ./public/ "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PUB/"
+
+      - name: Sync backend code (everything else -> laravel/)
+        run: |
+          rsync -az \
+            --exclude='.git' --exclude='.github' --exclude='node_modules' \
+            --exclude='public' --exclude='.env' --exclude='storage' \
+            --exclude='tests' \
+            -e "ssh -i ~/.ssh/deploy_key -o ControlPath=$CTRL_PATH -p $REMOTE_PORT" \
+            ./ "$REMOTE_USER@$REMOTE_HOST:$REMOTE_APP/"
+
+      # --- Remote steps: migrate, clear caches — same SSH connection --------------
+
+      - name: Run migrations and clear caches
+        run: |
+          ssh -i ~/.ssh/deploy_key -o ControlPath="$CTRL_PATH" -p "$REMOTE_PORT" "$REMOTE_USER@$REMOTE_HOST" "
+            set -e
+            cd $REMOTE_APP
+            php artisan migrate --force
+            php artisan view:clear
+            php artisan config:cache
+          "
+
+      - name: Close shared SSH connection
+        if: always()
+        run: ssh -i ~/.ssh/deploy_key -O exit -o ControlPath="$CTRL_PATH" -p "$REMOTE_PORT" "$REMOTE_USER@$REMOTE_HOST" || true
+
+      # --- Verify the site is actually up before calling this a success -----------
+
+      - name: Verify site is live
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' -m 45 https://xtrafreaky.com/) || code=000
+          echo "https://xtrafreaky.com/ => HTTP $code"
+          [ "$code" = "200" ] || { echo "Site did not return 200 after deploy"; exit 1; }
