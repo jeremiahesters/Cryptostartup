@@ -9,6 +9,7 @@ name: Deploy xtrafreaky.com
 on:
   push:
     branches: [Saqib]   # deploys straight to production on every push to this branch
+  workflow_dispatch: {}
 
 # Prevents two deploys racing each other if you push twice quickly.
 concurrency:
